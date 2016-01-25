@@ -29,7 +29,7 @@ namespace CSGO_K70
                         Console.WriteLine("-c - Try to reinitilize keyboard connection.");
                         Console.WriteLine("-quit - Exits the application.");
                         break;
-                    //Start the csgo api core if it isint already running.
+                    //Signal the csgo api core to start if it isin't already running.
                     case "-start":
                     case "-s":
                         if (Core.gameListener.gs1 != null && Core.gameListener.gs1.Running)
@@ -49,6 +49,7 @@ namespace CSGO_K70
                         break;
                     //quit the application.
                     case "-quit":
+                    case "-q":
                         Core.isRunning = false;
                         isRunning = false;
                         break;

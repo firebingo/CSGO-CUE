@@ -6,6 +6,8 @@ using CUE.NET.Exceptions;
 using CSGSI;
 using System.Drawing;
 using CUE.NET.Devices.Keyboard.Enums;
+using CUE.NET.Gradients;
+using CUE.NET.Brushes;
 
 namespace CSGO_K70
 {
@@ -70,18 +72,21 @@ namespace CSGO_K70
             {
                 bombBackLight();
             }
+
+            weaponLights();
+            healthLights();
         }
 
         /// <summary>
         /// Handle a new game state.
         /// </summary>
         /// <param name="gs"></param>
-        public void handleGameState(GameState gs)
+        public void handleGameState()
         {
             //team backlight only needs to be done on a new gamestate while the bomb is not planted.
             if (!Core.bombPlanted)
             {
-                teamBacklight(gs);
+                teamBacklight();
             }
         }
 
@@ -89,16 +94,16 @@ namespace CSGO_K70
         /// Backlight the keyboard with the team colors.
         /// </summary>
         /// <param name="gs"></param>
-        void teamBacklight(GameState gs)
+        void teamBacklight()
         {
-            if (gs.Player.Team.ToString() == "T") //terrorist
+            if (Core.isT) //terrorist
             {
                 foreach (var key in keyboard.Keys)
                 {
                     key.Led.Color = Color.FromArgb(255, 231, 60);
                 }
             }
-            else if (gs.Player.Team.ToString() == "CT") //counter-terrorist
+            else //counter-terrorist
             {
                 foreach (var key in keyboard.Keys)
                 {
@@ -128,7 +133,7 @@ namespace CSGO_K70
                 {
                     foreach (var key in keyboard.Keys)
                     {
-                        key.Led.Color = Color.FromArgb(0, 0, 0);
+                        key.Led.Color = Color.Black;
                     }
                 }
                 else
@@ -144,7 +149,7 @@ namespace CSGO_K70
                     //blank the numpad
                     foreach (var key in KeyGroups.numpad.Keys)
                     {
-                        key.Led.Color = Color.FromArgb(0, 0, 0);
+                        key.Led.Color = Color.Black;
                     }
                     //convert bomb time to a int
                     int intBombTime = (int)Math.Floor(Core.currentBomb);
@@ -200,6 +205,151 @@ namespace CSGO_K70
         }
 
         /// <summary>
+        /// Handles the lighting of number keys for weapon ammo and etc.
+        /// </summary>
+        void weaponLights()
+        {
+            //PRIMARY
+            //if the weapon has no reserve just blank the key.
+            if (Core.primaryReserve == 0)
+                keyboard[CorsairKeyboardKeyId.D1].Led.Color = Color.Black;
+            else
+            {
+                //if the weapon has no ammo loaded turn the key red.
+                if (Core.primaryCurrent == 0)
+                    keyboard[CorsairKeyboardKeyId.D1].Led.Color = Color.FromArgb(255, 0, 0);
+                else
+                {
+                    //this system makes the key turn from green to red based on how much ammo is left.
+                    float r = 0;
+                    float g = 0;
+                    if (Core.primaryCurrent / Core.primaryMax > 0.5)
+                    {
+                        g = 1f * 255f;
+                        r = (2.0f - ((Core.primaryCurrent / Core.primaryMax) / 0.5f)) * 255f;
+                    }
+                    else
+                    {
+                        g = (Core.primaryCurrent / Core.primaryMax) / 0.5f;
+                        r = 1f * 255f;
+                    }
+                    keyboard[CorsairKeyboardKeyId.D1].Led.Color = Color.FromArgb((int)r, (int)g, 0);
+                }
+            }
+            //SECONDARY
+            //if the weapon has no reserve just blank the key.
+            if (Core.secondaryReserve == 0)
+                keyboard[CorsairKeyboardKeyId.D2].Led.Color = Color.Black;
+            else
+            {
+                //if the weapon has no ammo loaded turn the key red.
+                if (Core.secondaryCurrent == 0)
+                    keyboard[CorsairKeyboardKeyId.D2].Led.Color = Color.FromArgb(255, 0, 0);
+                else
+                {
+                    //this system makes the key turn from green to red based on how much ammo is left.
+                    float r = 0;
+                    float g = 0;
+                    if (Core.secondaryCurrent / Core.secondaryMax > 0.5)
+                    {
+                        g = 1f * 255f;
+                        r = (2.0f - ((Core.secondaryCurrent / Core.secondaryMax) / 0.5f)) * 255f;
+                    }
+                    else
+                    {
+                        g = (Core.secondaryCurrent / Core.secondaryMax) / 0.5f;
+                        r = 1f * 255f;
+                    }
+                    keyboard[CorsairKeyboardKeyId.D2].Led.Color = Color.FromArgb((int)r, (int)g, 0);
+                }
+            }
+
+            //You always have a knife so keep the key green.
+            keyboard[CorsairKeyboardKeyId.D3].Led.Color = Color.FromArgb(0, 255, 0);
+
+            //if you have grenades turn the key green otherwise blank it.
+            if (Core.grenadeCount == 0)
+                keyboard[CorsairKeyboardKeyId.D4].Led.Color = Color.Black;
+            else
+                keyboard[CorsairKeyboardKeyId.D4].Led.Color = Color.FromArgb(0, 255, 0);
+
+            //if you have C4 turn the key green otherwise blank it.
+            if (Core.hasC4)
+                keyboard[CorsairKeyboardKeyId.D5].Led.Color = Color.Black;
+            else
+                keyboard[CorsairKeyboardKeyId.D5].Led.Color = Color.FromArgb(0, 255, 0);
+        }
+
+        /// <summary>
+        /// Handles the lighting of the function keys for health and armor values
+        /// </summary>
+        void healthLights()
+        {
+            //HEALTH
+            if (Core.healthCurrent == 0) //if no health blank keys
+            {
+                foreach (var key in KeyGroups.healthFunction.Keys)
+                {
+                    key.Led.Color = Color.Black;
+                }
+            }
+            else if (Core.healthCurrent == Core.healthMax) //if health is full set keys to green
+            {
+                foreach (var key in KeyGroups.healthFunction.Keys)
+                {
+                    key.Led.Color = Color.FromArgb(0, 255, 0);
+                }
+            }
+            else //uses a gradient brush to have the health key group act as a bar.
+            {
+                GradientStop[] healthGrad =
+                {
+                    new GradientStop(Core.healthCurrent / Core.healthMax, Color.FromArgb(0, 255, 0)),
+                    new GradientStop(1f, Color.Black)
+                };
+                LinearGradient healthGradient = new LinearGradient(healthGrad);
+                PointF startPoint = new PointF(0f, 0.5f);
+                PointF endPoint = new PointF(1f, 0.5f);
+                LinearGradientBrush healthBrush = new LinearGradientBrush(startPoint, endPoint, healthGradient);
+                KeyGroups.healthFunction.Brush = healthBrush;
+            }
+
+            //ARMOR
+            Color armorColor = Color.Black;
+            if (Core.hasHelmet)
+                armorColor = Color.FromArgb(0, 0, 255);
+            else
+                armorColor = Color.FromArgb(0, 128, 255);
+            if (Core.armorCurrent == 0) //if no armor turn keys red
+            {
+                foreach (var key in KeyGroups.armorFunction.Keys)
+                {
+                    key.Led.Color = Color.FromArgb(255, 0, 0);
+                }
+            }
+            else if (Core.armorCurrent == Core.armorMax) //if armor is full set keys to armor color
+            {
+                foreach (var key in KeyGroups.armorFunction.Keys)
+                {
+                    key.Led.Color = armorColor;
+                }
+            }
+            else //uses a gradient brush to have the armor key group act as a bar.
+            {
+                GradientStop[] armorGrad =
+                {
+                    new GradientStop(Core.armorCurrent / Core.armorMax, armorColor),
+                    new GradientStop(1f, Color.Black)
+                };
+                LinearGradient armorGradient = new LinearGradient(armorGrad);
+                PointF startPoint = new PointF(1f, 0.5f);
+                PointF endPoint = new PointF(0f, 0.5f);
+                LinearGradientBrush armorBrush = new LinearGradientBrush(startPoint, endPoint, armorGradient);
+                KeyGroups.armorFunction.Brush = armorBrush;
+            }
+        }
+
+        /// <summary>
         /// Finds a keypad number based on the number fed in.
         /// Only for single digits.
         /// </summary>
@@ -228,6 +378,5 @@ namespace CSGO_K70
             }
             return CorsairKeyboardKeyId.Keypad0;
         }
-
     }
 }

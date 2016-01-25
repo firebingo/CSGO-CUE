@@ -1,4 +1,5 @@
 ﻿using CSGSI;
+using CSGSI.Nodes;
 using System;
 using System.Collections.Generic;
 
@@ -13,6 +14,8 @@ namespace CSGO_K70
         public static string ip = "";
         public static bool startAPI = false; //makes sure the CSGO connection is only started once
 
+        public static bool isT = false;  //whether or not the player is a terrorist.
+
         //Bomb variables
         public static bool bombPlanted = false; //Whether or not the bomb has been planted.
         public const int maxBomb = 40; //The amount of time a bomb starts with. Currently 40s in CSGO.
@@ -25,6 +28,23 @@ namespace CSGO_K70
         public static List<float> bombTimes = new List<float>()
         { 2f, 1.5f, 1.5f, 1.5f, 1.5f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f,
             0.75f, 0.75f, 0.75f, 0.75f, 0.75f, 0.75f, 0.75f, 0.75f, 0.75f, 0.75f};
+
+        //Ammo variables
+        public static int primaryReserve = 0;
+        public static int primaryMax = 0;
+        public static int primaryCurrent = 0;
+        public static int secondaryReserve = 0;
+        public static int secondaryMax = 0;
+        public static int secondaryCurrent = 0;
+        public static int grenadeCount = 0;
+        public static bool hasC4 = false;
+
+        //Health variables
+        public const int healthMax = 100;
+        public const int armorMax = 100;
+        public static int healthCurrent = 0;
+        public static int armorCurrent = 0;
+        public static bool hasHelmet = false;
 
         /// <summary>
         /// The main loop update function.
@@ -53,6 +73,14 @@ namespace CSGO_K70
         {
             if (keyController.keyboard != null)
             {
+                //Find what team the player is on.
+                if(gs.Player.Team.ToString() != "Undefined")
+                {
+                    if (gs.Player.Team.ToString() == "T")
+                        isT = true;
+                    else if(gs.Player.Team.ToString() == "CT")
+                        isT = false;
+                }
                 //if the new game state says the bomb is planted and the application thinks the bomb isin't
                 // planted, start the bomb timer and set bombPlanted.
                 if (gs.Round.Bomb.ToString() != "Undefined" && !bombPlanted)
@@ -71,7 +99,44 @@ namespace CSGO_K70
                     currentBomb = 0;
                     bombTick = 0;
                 }
-                keyController.handleGameState(gs);
+                //Weapon and ammo counts.
+                //reset these two first.
+                hasC4 = false;
+                grenadeCount = 0;
+                for (int i = 0; i < gs.Player.Weapons.Count; ++i)
+                {
+                    if (gs.Player.Weapons[i].Type.ToString() != "Undefined")
+                    {
+                        switch (gs.Player.Weapons[i].Type.ToString())
+                        {
+                            case ("Rifle"):
+                                primaryMax = gs.Player.Weapons[i].AmmoClipMax;
+                                primaryCurrent = gs.Player.Weapons[i].AmmoClip;
+                                primaryReserve = gs.Player.Weapons[i].AmmoReserve;
+                                break;
+                            case ("Pistol"):
+                                secondaryMax = gs.Player.Weapons[i].AmmoClipMax;
+                                secondaryCurrent = gs.Player.Weapons[i].AmmoClip;
+                                secondaryReserve = gs.Player.Weapons[i].AmmoReserve;
+                                break;
+                            case ("Grenade"):
+                                ++grenadeCount;
+                                break;
+                            case("C4"):
+                                hasC4 = true;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                //Health and Armor status.
+                hasHelmet = false;
+                healthCurrent = gs.Player.State.Health;
+                armorCurrent = gs.Player.State.Armor;
+                hasHelmet = gs.Player.State.Helmet;
+
+                keyController.handleGameState();
             }
         }
     }

@@ -10,6 +10,8 @@ namespace CSGO_K70
     {
         public static RectangleKeyGroup numpad; //a seleciton of the numpad keys
         public static List<ListKeyGroup> numpadDigital; //a list of combinations of numpad keys meant to look like a digital number display.
+        public static ListKeyGroup healthFunction;
+        public static ListKeyGroup armorFunction;
 
         /// <summary>
         /// Intial setup of keygroups using the keyboard provided.
@@ -21,6 +23,20 @@ namespace CSGO_K70
             try
             {
                 numpad = new RectangleKeyGroup(keyboard, CorsairKeyboardKeyId.NumLock, CorsairKeyboardKeyId.KeypadEnter, 1.0f, true);
+                
+                healthFunction = new ListKeyGroup(keyboard, CorsairKeyboardKeyId.F1,
+                    CorsairKeyboardKeyId.F2,
+                    CorsairKeyboardKeyId.F3,
+                    CorsairKeyboardKeyId.F4,
+                    CorsairKeyboardKeyId.F5,
+                    CorsairKeyboardKeyId.F6);
+                armorFunction = new ListKeyGroup(keyboard, CorsairKeyboardKeyId.F7,
+                    CorsairKeyboardKeyId.F8,
+                    CorsairKeyboardKeyId.F9,
+                    CorsairKeyboardKeyId.F10,
+                    CorsairKeyboardKeyId.F11,
+                    CorsairKeyboardKeyId.F12);
+
                 //don't initilize the numpad groups if the keyboard doesn't have a numpad(K65).
                 if (useNumpad)
                 {
