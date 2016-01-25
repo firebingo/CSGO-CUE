@@ -2,6 +2,7 @@ A simple C# console application for Corsair keyboard lighting effects for CSGO u
 Currently changes backlight color based on team and backlight flashing for the bomb ticking along with a numpad bomb timer.
 Bomb lighting will be improved in the future and ammo related lighting for the number keys is next on the list.
 Note that the name CSGO_K70 is a name only and should work for any RGB Corsair keyboard not just the K70.
+The build.zip in the root of the project is the current running build.
 
 Usage:
 put the gamestate_integration_CSGO_K70.cfg in your CSGO config folder (ex D:\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\cfg)
@@ -10,9 +11,10 @@ put the gamestate_integration_CSGO_K70.cfg in your CSGO config folder (ex D:\Ste
 -quit: quits the application
 
 
-Built for Visual Studio 2015 and .NET 4.5.2
+Built for Visual Studio 2015, .NET 4.5.2, and x64.
 
 Using:
 CSGSI: https://github.com/rakijah/CSGSI
 CUE.NET: https://github.com/DarthAffe/CUE.NET
 Fody: https://github.com/Fody/Fody/
+(If you have problems building related to Fody try reinstalling its packages)
