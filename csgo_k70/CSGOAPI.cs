@@ -29,7 +29,7 @@ namespace CSGO_K70
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Exception occured in starting Game Listener");
+                Console.WriteLine("Exception occured in starting Game Listener!");
                 Console.WriteLine("Message: " + ex.Message.ToString());
             }
         }

@@ -19,6 +19,7 @@ namespace CSGO_K70
         /// </summary>
         public void Start()
         {
+            //initilize the keyboard or return an exception if it fails.
             try
             {
                 CueSDK.Initialize();
@@ -54,16 +55,18 @@ namespace CSGO_K70
             if (Core.currentBomb > 0)
                 Core.currentBomb -= dt;
 
-            if (Core.flashTime > 0 && Core.deadTime <= 0)
-                Core.flashTime -= dt;
-
+            //This section is discussed in detail in bombBackLight.
             if (Core.deadTime > 0)
                 Core.deadTime -= dt;
+
+            if (Core.flashTime > 0 && Core.deadTime <= 0)
+                Core.flashTime -= dt;
 
             if (Core.flashTime <= 0 && Core.deadTime <= 0 && Core.currentBomb > 5)
                 flashTimeIncrement();
 
-            if(Core.bombPlanted)
+            //the bomb backlighting is done "per frame" while the bomb is planted instead of just on a new game state.
+            if (Core.bombPlanted)
             {
                 bombBackLight();
             }
@@ -75,6 +78,7 @@ namespace CSGO_K70
         /// <param name="gs"></param>
         public void handleGameState(GameState gs)
         {
+            //team backlight only needs to be done on a new gamestate while the bomb is not planted.
             if (!Core.bombPlanted)
             {
                 teamBacklight(gs);
@@ -87,18 +91,18 @@ namespace CSGO_K70
         /// <param name="gs"></param>
         void teamBacklight(GameState gs)
         {
-            if (gs.Player.Team.ToString() == "T")
+            if (gs.Player.Team.ToString() == "T") //terrorist
             {
                 foreach (var key in keyboard.Keys)
                 {
-                    key.Led.Color = Color.FromArgb(255, 165, 0);
+                    key.Led.Color = Color.FromArgb(255, 231, 60);
                 }
             }
-            else if (gs.Player.Team.ToString() == "CT")
+            else if (gs.Player.Team.ToString() == "CT") //counter-terrorist
             {
                 foreach (var key in keyboard.Keys)
                 {
-                    key.Led.Color = Color.FromArgb(0, 90, 255);
+                    key.Led.Color = Color.FromArgb(255, 200, 111);
                 }
             }
         }
@@ -111,6 +115,15 @@ namespace CSGO_K70
             if (Core.currentBomb > 0)
             {
                 //full backlight
+                //I'm going to rubber duck this so when I look at it in the future i'm not confused.
+                //Dead time is used for timing how long the keyboard should NOT be lit.
+                //Flash time is used for timing how long the keyboard SHOULD be lit.
+                //Dead time ticks down from the start until it hits < 0. Then flash time starts ticking down.
+                //Once they both hit < 0 flashTimeIncrement is called which resets flash time, and increments bombTick,
+                // which then resets dead time to the next time from bombTimes, or 0.35 if its over the length of bombTimes.
+                //While dead time is > 0 the keyboard stays unlit.
+                //While dead time is < 0 and flashtime is > 0 the keyboard is lit.
+                //None of this matters once currentBomb has reached under 5 seconds and the lights just stay solid.
                 if (Core.deadTime > 0 && Core.currentBomb > 5)
                 {
                     foreach (var key in keyboard.Keys)
@@ -178,11 +191,11 @@ namespace CSGO_K70
             {
                 //increment the bomb timer then set the next flash time.
                 ++Core.bombTick;
-                if (Core.bombTick > Core.bombTimes.Count-1)
+                if (Core.bombTick > Core.bombTimes.Count - 1)
                     Core.deadTime = 0.35f;
                 else
                     Core.deadTime = Core.bombTimes[Core.bombTick];
-                Core.flashTime = 0.25f;
+                Core.flashTime = Core.flashMax;
             }
         }
 

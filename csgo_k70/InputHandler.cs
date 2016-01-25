@@ -26,12 +26,14 @@ namespace CSGO_K70
                     //help
                     case "-h":
                         Console.WriteLine("-s - Asks for ip then starts game listener.");
+                        Console.WriteLine("-c - Try to reinitilize keyboard connection.");
                         Console.WriteLine("-quit - Exits the application.");
                         break;
                     //Start the csgo api core if it isint already running.
+                    case "-start":
                     case "-s":
                         if (Core.gameListener.gs1 != null && Core.gameListener.gs1.Running)
-                            Console.Write("Game Listener is already running");
+                            Console.WriteLine("Game Listener is already running");
                         else
                         {
                             //wait for ip input then signal the main thread to start the api.
@@ -40,6 +42,12 @@ namespace CSGO_K70
                             Core.startAPI = true;
                         }
                         break;
+                    //try to reinitilize the keyboard.
+                    case "-c":
+                        Console.WriteLine("Attempting to reinitilize keyboard connection.");
+                        Core.keyController.Start();
+                        break;
+                    //quit the application.
                     case "-quit":
                         Core.isRunning = false;
                         isRunning = false;
