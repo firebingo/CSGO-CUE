@@ -75,6 +75,7 @@ namespace CSGO_K70
 
             weaponLights();
             healthLights();
+            WASDLights();
         }
 
         /// <summary>
@@ -110,6 +111,17 @@ namespace CSGO_K70
                     key.Led.Color = Color.FromArgb(255, 200, 111);
                 }
             }
+        }
+
+        void WASDLights()
+        {
+            foreach(var key in KeyGroups.WASD.Keys)
+            {
+                key.Led.Color = Color.White;
+            }
+            keyboard[CorsairKeyboardKeyId.Space].Led.Color = Color.White;
+            keyboard[CorsairKeyboardKeyId.LeftCtrl].Led.Color = Color.White;
+            keyboard[CorsairKeyboardKeyId.LeftShift].Led.Color = Color.White;
         }
 
         /// <summary>

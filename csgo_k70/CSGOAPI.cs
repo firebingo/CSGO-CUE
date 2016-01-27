@@ -1,6 +1,8 @@
 ﻿using System;
 using CSGSI;
 
+//documentation on game state returns
+//https://www.reddit.com/r/GlobalOffensive/comments/3w26kq/game_state_integration_quick_and_dirty/
 namespace CSGO_K70
 {
     class CSGOAPI

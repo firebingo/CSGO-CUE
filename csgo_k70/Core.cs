@@ -110,6 +110,10 @@ namespace CSGO_K70
                         switch (gs.Player.Weapons[i].Type.ToString())
                         {
                             case ("Rifle"):
+                            case ("Submachine Gun"):
+                            case ("Shotgun"):
+                            case ("Sniper Rifle"):
+                            case ("Machine Gun"):
                                 primaryMax = gs.Player.Weapons[i].AmmoClipMax;
                                 primaryCurrent = gs.Player.Weapons[i].AmmoClip;
                                 primaryReserve = gs.Player.Weapons[i].AmmoReserve;
