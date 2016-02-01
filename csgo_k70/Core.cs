@@ -7,7 +7,6 @@ namespace CSGO_K70
 {
     static class Core
     {
-        public static InputHandler input = new InputHandler();
         public static CSGOAPI gameListener = new CSGOAPI();
         public static KeyLighter keyController = new KeyLighter();
         public static bool isRunning = false;

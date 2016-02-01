@@ -8,7 +8,7 @@ namespace CSGO_K70
 {
     static class KeyGroups
     {
-        public static RectangleKeyGroup numpad; //a seleciton of the numpad keys
+        public static RectangleKeyGroup numpad; //a selection of the numpad keys.
         public static List<ListKeyGroup> numpadDigital; //a list of combinations of numpad keys meant to look like a digital number display.
         public static ListKeyGroup WASD;
         public static ListKeyGroup healthFunction;
@@ -23,8 +23,6 @@ namespace CSGO_K70
         {
             try
             {
-                numpad = new RectangleKeyGroup(keyboard, CorsairKeyboardKeyId.NumLock, CorsairKeyboardKeyId.KeypadEnter, 1.0f, true);
-
                 WASD = new ListKeyGroup(keyboard, keyboard['W'],
                     keyboard['A'],
                     keyboard['S'],
@@ -46,6 +44,8 @@ namespace CSGO_K70
                 //don't initilize the numpad groups if the keyboard doesn't have a numpad(K65).
                 if (useNumpad)
                 {
+					numpad = new RectangleKeyGroup(keyboard, CorsairKeyboardKeyId.NumLock, CorsairKeyboardKeyId.KeypadEnter, 1.0f, true);
+					
                     numpadDigital = new List<ListKeyGroup>();
                     for (int i = 0; i < 10; ++i)
                     {

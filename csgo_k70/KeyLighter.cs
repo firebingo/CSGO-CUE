@@ -33,7 +33,7 @@ namespace CSGO_K70
                     keyboard.UpdateMode = UpdateMode.Manual;
                     //keyboard.UpdateFrequency = 1f/30f;
                     if (keyboard.DeviceInfo.Model.Contains("K65"))
-                        useNumpad = true;
+                        useNumpad = false;
                     KeyGroups.setupKeyGroups(keyboard, useNumpad);
                 }
 
