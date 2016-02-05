@@ -1,6 +1,7 @@
 A simple C# console application for Corsair keyboard lighting effects for CSGO using its game state integration.
 Currently changes backlight color based on team and backlight flashing for the bomb ticking along with a numpad bomb timer.
-Bomb lighting will be improved in the future and ammo related lighting for the number keys is next on the list.
+Along with lighting number keys green when you have weapons. The keys fade to red as your current clip runs out of ammo.
+Also has a health bar for f1 - f6, and a armor bar for f7 - f12.
 Note that the name CSGO_K70 is a name only and should work for any RGB Corsair keyboard not just the K70.
 The build.zip in the root of the project is the current running build.
 
