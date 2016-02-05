@@ -54,7 +54,7 @@ namespace CSGO_K70
                         isRunning = false;
                         break;
                     default:
-                        Console.Write("Invalid Input Given");
+                        Console.WriteLine("Invalid Input Given");
                         break;
                 }
             }

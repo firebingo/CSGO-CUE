@@ -67,15 +67,18 @@ namespace CSGO_K70
             if (Core.flashTime <= 0 && Core.deadTime <= 0 && Core.currentBomb > 5)
                 flashTimeIncrement();
 
-            //the bomb backlighting is done "per frame" while the bomb is planted instead of just on a new game state.
-            if (Core.bombPlanted)
+            if (Core.inGame)
             {
-                bombBackLight();
-            }
+                //the bomb backlighting is done "per frame" while the bomb is planted instead of just on a new game state.
+                if (Core.bombPlanted)
+                {
+                    bombBackLight();
+                }
 
-            weaponLights();
-            healthLights();
-            WASDLights();
+                weaponLights();
+                healthLights();
+                WASDLights();
+            }
         }
 
         /// <summary>
@@ -84,10 +87,22 @@ namespace CSGO_K70
         /// <param name="gs"></param>
         public void handleGameState()
         {
-            //team backlight only needs to be done on a new gamestate while the bomb is not planted.
-            if (!Core.bombPlanted)
+            if (Core.inGame)
             {
-                teamBacklight();
+                //team backlight only needs to be done on a new gamestate while the bomb is not planted.
+                if (!Core.bombPlanted)
+                {
+                    teamBacklight();
+                    //these two are done here also to prevent the keys from flashing.
+                    weaponLights();
+                    healthLights();
+                    WASDLights();
+                }
+            }
+            else
+            {
+                foreach (var key in keyboard.Keys)
+                    key.Led.Color = Color.Gray;
             }
         }
 
@@ -101,21 +116,21 @@ namespace CSGO_K70
             {
                 foreach (var key in keyboard.Keys)
                 {
-                    key.Led.Color = Color.FromArgb(255, 231, 60);
+                    key.Led.Color = Color.FromArgb(255, 204, 51);
                 }
             }
             else //counter-terrorist
             {
                 foreach (var key in keyboard.Keys)
                 {
-                    key.Led.Color = Color.FromArgb(255, 200, 111);
+                    key.Led.Color = Color.FromArgb(89, 157, 225);
                 }
             }
         }
 
         void WASDLights()
         {
-            foreach(var key in KeyGroups.WASD.Keys)
+            foreach (var key in KeyGroups.WASD.Keys)
             {
                 key.Led.Color = Color.White;
             }
@@ -209,7 +224,7 @@ namespace CSGO_K70
                 //increment the bomb timer then set the next flash time.
                 ++Core.bombTick;
                 if (Core.bombTick > Core.bombTimes.Count - 1)
-                    Core.deadTime = 0.35f;
+                    Core.deadTime = 0.28f;
                 else
                     Core.deadTime = Core.bombTimes[Core.bombTick];
                 Core.flashTime = Core.flashMax;
@@ -223,7 +238,7 @@ namespace CSGO_K70
         {
             //PRIMARY
             //if the weapon has no reserve just blank the key.
-            if (Core.primaryReserve == 0)
+            if (Core.primaryReserve == 0 && Core.primaryCurrent == 0)
                 keyboard[CorsairKeyboardKeyId.D1].Led.Color = Color.Black;
             else
             {
@@ -235,14 +250,15 @@ namespace CSGO_K70
                     //this system makes the key turn from green to red based on how much ammo is left.
                     float r = 0;
                     float g = 0;
-                    if (Core.primaryCurrent / Core.primaryMax > 0.5)
+                    //vs says the float cast is redundent but it doesnt work without it.
+                    if ((float)Core.primaryCurrent / (float)Core.primaryMax > 0.5)
                     {
                         g = 1f * 255f;
-                        r = (2.0f - ((Core.primaryCurrent / Core.primaryMax) / 0.5f)) * 255f;
+                        r = (2.0f - ((float)Core.primaryCurrent / (float)Core.primaryMax / 0.5f)) * 255f;
                     }
                     else
                     {
-                        g = (Core.primaryCurrent / Core.primaryMax) / 0.5f;
+                        g = ((float)Core.primaryCurrent / (float)Core.primaryMax / 0.5f) * 255;
                         r = 1f * 255f;
                     }
                     keyboard[CorsairKeyboardKeyId.D1].Led.Color = Color.FromArgb((int)r, (int)g, 0);
@@ -250,7 +266,7 @@ namespace CSGO_K70
             }
             //SECONDARY
             //if the weapon has no reserve just blank the key.
-            if (Core.secondaryReserve == 0)
+            if (Core.secondaryReserve == 0 && Core.secondaryCurrent == 0)
                 keyboard[CorsairKeyboardKeyId.D2].Led.Color = Color.Black;
             else
             {
@@ -262,14 +278,14 @@ namespace CSGO_K70
                     //this system makes the key turn from green to red based on how much ammo is left.
                     float r = 0;
                     float g = 0;
-                    if (Core.secondaryCurrent / Core.secondaryMax > 0.5)
+                    if ((float)Core.secondaryCurrent / (float)Core.secondaryMax > 0.5)
                     {
                         g = 1f * 255f;
-                        r = (2.0f - ((Core.secondaryCurrent / Core.secondaryMax) / 0.5f)) * 255f;
+                        r = (2.0f - (((float)Core.secondaryCurrent / (float)Core.secondaryMax) / 0.5f)) * 255f;
                     }
                     else
                     {
-                        g = (Core.secondaryCurrent / Core.secondaryMax) / 0.5f;
+                        g = (((float)Core.secondaryCurrent / (float)Core.secondaryMax) / 0.5f) * 255f;
                         r = 1f * 255f;
                     }
                     keyboard[CorsairKeyboardKeyId.D2].Led.Color = Color.FromArgb((int)r, (int)g, 0);
@@ -286,7 +302,7 @@ namespace CSGO_K70
                 keyboard[CorsairKeyboardKeyId.D4].Led.Color = Color.FromArgb(0, 255, 0);
 
             //if you have C4 turn the key green otherwise blank it.
-            if (Core.hasC4)
+            if (!Core.hasC4)
                 keyboard[CorsairKeyboardKeyId.D5].Led.Color = Color.Black;
             else
                 keyboard[CorsairKeyboardKeyId.D5].Led.Color = Color.FromArgb(0, 255, 0);
@@ -312,18 +328,47 @@ namespace CSGO_K70
                     key.Led.Color = Color.FromArgb(0, 255, 0);
                 }
             }
-            else //uses a gradient brush to have the health key group act as a bar.
+            else //have the health key group act as a health bar.
             {
-                GradientStop[] healthGrad =
+                foreach (var key in KeyGroups.healthFunction.Keys)
+                    key.Led.Color = Color.Black;
+                float healthRatio = (float)Core.healthCurrent / (float)Core.healthMax;
+                if (healthRatio < 0.17f)
                 {
-                    new GradientStop(Core.healthCurrent / Core.healthMax, Color.FromArgb(0, 255, 0)),
-                    new GradientStop(1f, Color.Black)
-                };
-                LinearGradient healthGradient = new LinearGradient(healthGrad);
-                PointF startPoint = new PointF(0f, 0.5f);
-                PointF endPoint = new PointF(1f, 0.5f);
-                LinearGradientBrush healthBrush = new LinearGradientBrush(startPoint, endPoint, healthGradient);
-                KeyGroups.healthFunction.Brush = healthBrush;
+                    keyboard[CorsairKeyboardKeyId.F1].Led.Color = Color.FromArgb(0, (int)((healthRatio / 0.17f) * 255f), 0);
+                }
+                else if (healthRatio < 0.33f)
+                {
+                    keyboard[CorsairKeyboardKeyId.F1].Led.Color = Color.FromArgb(0, 255, 0);
+                    keyboard[CorsairKeyboardKeyId.F2].Led.Color = Color.FromArgb(0, (int)(((healthRatio - 0.17f) / 0.17f) * 255f), 0);
+                }
+                else if (healthRatio < 0.5f)
+                {
+                    keyboard[CorsairKeyboardKeyId.F1].Led.Color = Color.FromArgb(0, 255, 0);
+                    keyboard[CorsairKeyboardKeyId.F2].Led.Color = Color.FromArgb(0, 255, 0);
+                    keyboard[CorsairKeyboardKeyId.F3].Led.Color = Color.FromArgb(0, (int)(((healthRatio - 0.33f) / 0.17 ) * 255f), 0);
+                }
+                else if (healthRatio < 0.67f)
+                {
+                    keyboard[CorsairKeyboardKeyId.F1].Led.Color = Color.FromArgb(0, 255, 0);
+                    keyboard[CorsairKeyboardKeyId.F2].Led.Color = Color.FromArgb(0, 255, 0);
+                    keyboard[CorsairKeyboardKeyId.F3].Led.Color = Color.FromArgb(0, 255, 0);
+                    keyboard[CorsairKeyboardKeyId.F4].Led.Color = Color.FromArgb(0, (int)(((healthRatio - 0.5f) / 0.17) * 255f), 0);
+                }
+                else if (healthRatio < 0.83f)
+                {
+                    keyboard[CorsairKeyboardKeyId.F1].Led.Color = Color.FromArgb(0, 255, 0);
+                    keyboard[CorsairKeyboardKeyId.F2].Led.Color = Color.FromArgb(0, 255, 0);
+                    keyboard[CorsairKeyboardKeyId.F3].Led.Color = Color.FromArgb(0, 255, 0);
+                    keyboard[CorsairKeyboardKeyId.F4].Led.Color = Color.FromArgb(0, 255, 0);
+                    keyboard[CorsairKeyboardKeyId.F5].Led.Color = Color.FromArgb(0, (int)(((healthRatio - 0.67f) / 0.17) * 255f), 0);
+                }
+                else
+                {
+                    foreach (var key in KeyGroups.healthFunction.Keys)
+                        key.Led.Color = Color.FromArgb(0, 255, 0);
+                    keyboard[CorsairKeyboardKeyId.F5].Led.Color = Color.FromArgb(0, (int)(((healthRatio - 0.83f) / 0.17) * 255f), 0);
+                }
             }
 
             //ARMOR
@@ -346,18 +391,53 @@ namespace CSGO_K70
                     key.Led.Color = armorColor;
                 }
             }
-            else //uses a gradient brush to have the armor key group act as a bar.
+            else //have the armor key group act as an armor bar.
             {
-                GradientStop[] armorGrad =
+                foreach (var key in KeyGroups.armorFunction.Keys)
+                    key.Led.Color = Color.Black;
+                float armorRatio = (float)Core.armorCurrent / (float)Core.armorMax;
+                if (armorRatio < 0.17f)
                 {
-                    new GradientStop(Core.armorCurrent / Core.armorMax, armorColor),
-                    new GradientStop(1f, Color.Black)
-                };
-                LinearGradient armorGradient = new LinearGradient(armorGrad);
-                PointF startPoint = new PointF(1f, 0.5f);
-                PointF endPoint = new PointF(0f, 0.5f);
-                LinearGradientBrush armorBrush = new LinearGradientBrush(startPoint, endPoint, armorGradient);
-                KeyGroups.armorFunction.Brush = armorBrush;
+                    Color armorColorGrad = Color.FromArgb(0, armorColor.G, (int)((armorRatio / 0.17f) * 255f));
+                    keyboard[CorsairKeyboardKeyId.F12].Led.Color = armorColorGrad;
+                }
+                else if (armorRatio < 0.33f)
+                {
+                    Color armorColorGrad = Color.FromArgb(0, armorColor.G, (int)(((armorRatio - 0.17f) / 0.17f) * 255f));
+                    keyboard[CorsairKeyboardKeyId.F12].Led.Color = armorColor;
+                    keyboard[CorsairKeyboardKeyId.F11].Led.Color = armorColorGrad;
+                }
+                else if (armorRatio < 0.5f)
+                {
+                    Color armorColorGrad = Color.FromArgb(0, armorColor.G, (int)(((armorRatio - 0.33f) / 0.17f) * 255f));
+                    keyboard[CorsairKeyboardKeyId.F12].Led.Color = armorColor;
+                    keyboard[CorsairKeyboardKeyId.F11].Led.Color = armorColor;
+                    keyboard[CorsairKeyboardKeyId.F10].Led.Color = armorColorGrad;
+                }
+                else if (armorRatio < 0.67f)
+                {
+                    Color armorColorGrad = Color.FromArgb(0, armorColor.G, (int)(((armorRatio - 0.5f) / 0.17f) * 255f));
+                    keyboard[CorsairKeyboardKeyId.F12].Led.Color = armorColor;
+                    keyboard[CorsairKeyboardKeyId.F11].Led.Color = armorColor;
+                    keyboard[CorsairKeyboardKeyId.F10].Led.Color = armorColor;
+                    keyboard[CorsairKeyboardKeyId.F9].Led.Color = armorColorGrad;
+                }
+                else if (armorRatio < 0.83f)
+                {
+                    Color armorColorGrad = Color.FromArgb(0, armorColor.G, (int)(((armorRatio - 0.67f) / 0.17f) * 255f));
+                    keyboard[CorsairKeyboardKeyId.F12].Led.Color = armorColor;
+                    keyboard[CorsairKeyboardKeyId.F11].Led.Color = armorColor;
+                    keyboard[CorsairKeyboardKeyId.F10].Led.Color = armorColor;
+                    keyboard[CorsairKeyboardKeyId.F9].Led.Color = armorColor;
+                    keyboard[CorsairKeyboardKeyId.F8].Led.Color = armorColorGrad;
+                }
+                else
+                {
+                    Color armorColorGrad = Color.FromArgb(0, armorColor.G, (int)(((armorRatio - 0.83f) / 0.17f) * 255f));
+                    foreach (var key in KeyGroups.armorFunction.Keys)
+                        key.Led.Color = armorColor;
+                    keyboard[CorsairKeyboardKeyId.F8].Led.Color = armorColorGrad;
+                }
             }
         }
 
