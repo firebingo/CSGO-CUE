@@ -75,9 +75,15 @@ namespace CSGO_K70
                     bombBackLight();
                 }
 
-                weaponLights();
-                healthLights();
-                WASDLights();
+                //if (Core.burningAmount > 0)
+                    //fireLights();
+
+                //weaponLights();
+                //healthLights();
+                //WASDLights();
+
+                //if (Core.flashAmount > 0)
+                    //flashLights();
             }
         }
 
@@ -93,11 +99,15 @@ namespace CSGO_K70
                 if (!Core.bombPlanted)
                 {
                     teamBacklight();
-                    //these two are done here also to prevent the keys from flashing.
-                    weaponLights();
-                    healthLights();
-                    WASDLights();
                 }
+                //these are done here also to prevent the keys from flashing.
+                if (Core.burningAmount > 0)
+                    fireLights();
+                weaponLights();
+                healthLights();
+                WASDLights();
+                if (Core.flashAmount > 0)
+                    flashLights();
             }
             else
             {
@@ -438,6 +448,33 @@ namespace CSGO_K70
                         key.Led.Color = armorColor;
                     keyboard[CorsairKeyboardKeyId.F8].Led.Color = armorColorGrad;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Handles the lighting of keys for when you are affected by a flash bang.
+        /// </summary>
+        void flashLights()
+        {
+            foreach (var key in keyboard)
+            {
+                int red = Core.clampInt(key.Led.Color.R + Core.flashAmount, 255);
+                int green = Core.clampInt(key.Led.Color.G + Core.flashAmount, 255);
+                int blue = Core.clampInt(key.Led.Color.B + Core.flashAmount, 255);
+                key.Led.Color = Color.FromArgb(red, green, blue);
+            }
+        }
+
+        /// <summary>
+        /// Handles the lighting of keys for when you are burning.
+        /// </summary>
+        void fireLights()
+        {
+            foreach (var key in keyboard)
+            {
+                int red = Core.clampInt(key.Led.Color.R + Core.burningAmount, 255);
+                int green = Core.clampInt(key.Led.Color.G + Core.burningAmount, 255);
+                key.Led.Color = Color.FromArgb(red, green, key.Led.Color.B);
             }
         }
 

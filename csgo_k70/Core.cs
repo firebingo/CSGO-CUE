@@ -49,6 +49,10 @@ namespace CSGO_K70
         public static int armorCurrent = 0;
         public static bool hasHelmet = false;
 
+        //Flash and Fire variables
+        public static int flashAmount = 0;
+        public static int burningAmount = 0;
+
         /// <summary>
         /// The main loop update function.
         /// </summary>
@@ -163,9 +167,25 @@ namespace CSGO_K70
                 healthCurrent = gs.Player.State.Health;
                 armorCurrent = gs.Player.State.Armor;
                 hasHelmet = gs.Player.State.Helmet;
+                flashAmount = gs.Player.State.Flashed;
+                burningAmount = gs.Player.State.Burning;
 
                 keyController.handleGameState();
             }
+        }
+
+        /// <summary>
+        /// Clamps an int to a given upper value.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="clamp"></param>
+        /// <returns></returns>
+        public static int clampInt(int i, int clamp)
+        {
+            if (i > clamp)
+                return clamp;
+            else
+                return i;
         }
     }
 }
