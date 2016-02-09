@@ -76,14 +76,15 @@ namespace CSGO_K70
                 }
 
                 //if (Core.burningAmount > 0)
-                    //fireLights();
+                //fireLights();
 
                 //weaponLights();
                 //healthLights();
                 //WASDLights();
 
                 //if (Core.flashAmount > 0)
-                    //flashLights();
+                //flashLights();
+                
             }
         }
 
@@ -473,8 +474,8 @@ namespace CSGO_K70
             foreach (var key in keyboard)
             {
                 int red = Core.clampInt(key.Led.Color.R + Core.burningAmount, 255);
-                int green = Core.clampInt(key.Led.Color.G + Core.burningAmount, 255);
-                key.Led.Color = Color.FromArgb(red, green, key.Led.Color.B);
+                int green = Core.clampInt(key.Led.Color.G + Core.burningAmount, 200);
+                key.Led.Color = Color.FromArgb(red, green, 0);
             }
         }
 
