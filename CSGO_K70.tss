@@ -5,13 +5,10 @@
       <string>F:\UnityProjects\Corsair\CSGO-CUE\CSGO_K70\KeyLighter.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>F:\UnityProjects\Corsair\CSGO-CUE\CSGO_K70\Program.cs</string>
+      <string>f:\unityprojects\corsair\csgo-cue\csgo_k70\core.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>F:\UnityProjects\Corsair\CSGO-CUE\CSGO_K70\Core.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>F:\UnityProjects\Corsair\CSGO-CUE\CSGO_K70\InputHandler.cs</string>
+      <string>f:\unityprojects\corsair\csgo-cue\csgo_k70\inputhandler.cs</string>
     </ArrayOfString>
   </ArrayOfArrayOfString>
 </ArrayOfArrayOfArrayOfString>
