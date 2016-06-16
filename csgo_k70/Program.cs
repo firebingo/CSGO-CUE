@@ -29,9 +29,9 @@ namespace CSGO_K70
             //continue to run while the core is set to run.
             do
             {
-                Thread.Sleep(5);
                 timer.Restart();
                 timer.Start();
+				Thread.Sleep(4);
                 Core.mainUpdate(dt);
                 timer.Stop();
                 dt = Convert.ToSingle(timer.Elapsed.TotalMilliseconds / 1000);
