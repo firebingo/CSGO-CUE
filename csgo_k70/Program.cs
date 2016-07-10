@@ -34,7 +34,7 @@ namespace CSGO_K70
 				Thread.Sleep(4);
                 Core.mainUpdate(dt);
                 timer.Stop();
-                dt = Convert.ToSingle(timer.Elapsed.TotalMilliseconds / 1000);
+                dt = Convert.ToSingle((timer.Elapsed.TotalMilliseconds + 4) / 1000);
             }
             while (Core.isRunning);
 

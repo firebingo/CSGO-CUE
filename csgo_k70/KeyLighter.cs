@@ -75,15 +75,15 @@ namespace CSGO_K70
                     bombBackLight();
                 }
 
-                //if (Core.burningAmount > 0)
-                //fireLights();
+                if (Core.burningAmount > 0)
+                fireLights();
 
-                //weaponLights();
-                //healthLights();
-                //WASDLights();
+                weaponLights();
+                healthLights();
+                WASDLights();
 
-                //if (Core.flashAmount > 0)
-                //flashLights();
+                if (Core.flashAmount > 0)
+                flashLights();
                 
             }
         }
