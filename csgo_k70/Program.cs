@@ -22,23 +22,22 @@ namespace CSGO_K70
             //initilize the CUE SDK
             Core.keyController.Start();
 
-            //DT timer
-            Stopwatch timer = new Stopwatch();
-            float dt = 0.0f;
+			//DT timer
+			DateTime timerDate = new DateTime();
+			float dt = 0.0f;
 
-            //continue to run while the core is set to run.
-            do
-            {
-                timer.Restart();
-                timer.Start();
-                Core.mainUpdate(dt);
-                timer.Stop();
-                dt = Convert.ToSingle(timer.Elapsed.TotalMilliseconds / 1000);
-            }
-            while (Core.isRunning);
+			//continue to run while the core is set to run.
+			do
+			{
+				timerDate = DateTime.Now;
+				Thread.Sleep(4);
+				Core.mainUpdate(dt);
+				dt = Convert.ToSingle(DateTime.Now.Subtract(timerDate).TotalMilliseconds);
+			}
+			while (Core.isRunning);
 
-            //kill the input thread before the application closes.
-            inputThread.Abort();
+			//kill the input thread before the application closes.
+			inputThread.Abort();
 
             if (Core.gameListener.gs1 != null)
                 Core.gameListener.gs1.Stop();
