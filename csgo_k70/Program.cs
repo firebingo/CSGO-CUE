@@ -31,10 +31,15 @@ namespace CSGO_K70
             {
                 timer.Restart();
                 timer.Start();
+				Thread.Sleep(4);
                 Core.mainUpdate(dt);
                 timer.Stop();
-                dt = Convert.ToSingle(timer.Elapsed.TotalMilliseconds / 1000);
-            }
+#if DEBUG
+				dt = Convert.ToSingle((timer.Elapsed.TotalMilliseconds + 4) / 1000);
+#else
+				dt = Convert.ToSingle((timer.Elapsed.TotalMilliseconds) / 1000);
+#endif
+			}
             while (Core.isRunning);
 
             //kill the input thread before the application closes.
