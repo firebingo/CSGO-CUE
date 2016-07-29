@@ -75,15 +75,15 @@ namespace CSGO_K70
                     bombBackLight();
                 }
 
-                //if (Core.burningAmount > 0)
-                //fireLights();
+                if (Core.burningAmount > 0)
+                fireLights();
 
-                //weaponLights();
-                //healthLights();
-                //WASDLights();
+                weaponLights();
+                healthLights();
+                WASDLights();
 
-                //if (Core.flashAmount > 0)
-                //flashLights();
+                if (Core.flashAmount > 0)
+                flashLights();
                 
             }
         }
@@ -378,7 +378,7 @@ namespace CSGO_K70
                 {
                     foreach (var key in KeyGroups.healthFunction.Keys)
                         key.Led.Color = Color.FromArgb(0, 255, 0);
-                    keyboard[CorsairKeyboardKeyId.F5].Led.Color = Color.FromArgb(0, (int)(((healthRatio - 0.83f) / 0.17) * 255f), 0);
+                    keyboard[CorsairKeyboardKeyId.F6].Led.Color = Color.FromArgb(0, (int)(((healthRatio - 0.83f) / 0.17) * 255f), 0);
                 }
             }
 
@@ -447,7 +447,7 @@ namespace CSGO_K70
                     Color armorColorGrad = Color.FromArgb(0, armorColor.G, (int)(((armorRatio - 0.83f) / 0.17f) * 255f));
                     foreach (var key in KeyGroups.armorFunction.Keys)
                         key.Led.Color = armorColor;
-                    keyboard[CorsairKeyboardKeyId.F8].Led.Color = armorColorGrad;
+                    keyboard[CorsairKeyboardKeyId.F7].Led.Color = armorColorGrad;
                 }
             }
         }
