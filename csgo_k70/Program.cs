@@ -32,7 +32,7 @@ namespace CSGO_K70
 				timerDate = DateTime.Now;
 				Thread.Sleep(4);
 				Core.mainUpdate(dt);
-				dt = Convert.ToSingle(DateTime.Now.Subtract(timerDate).TotalMilliseconds);
+				dt = Convert.ToSingle(DateTime.Now.Subtract(timerDate).TotalMilliseconds / 1000);
 			}
 			while (Core.isRunning);
 
