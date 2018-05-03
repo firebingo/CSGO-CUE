@@ -12,10 +12,9 @@ put the gamestate_integration_CSGO_K70.cfg in your CSGO config folder (ex D:\Ste
 -quit: quits the application
 
 
-Built for Visual Studio 2015, .NET 4.5.2, and x64.
+Built for Visual Studio 2017, .NET 4.5.2, and x64.
 
 Using:
 CSGSI: https://github.com/rakijah/CSGSI
-CUE.NET: https://github.com/DarthAffe/CUE.NET
+RGB.NET: https://github.com/DarthAffe/RGB.NET
 Fody: https://github.com/Fody/Fody/
-(If you have problems building related to Fody try reinstalling its packages)

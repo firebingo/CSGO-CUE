@@ -187,5 +187,10 @@ namespace CSGO_K70
             else
                 return i;
         }
+
+		public static RGB.NET.Core.Color SysColorToRGBColor(System.Drawing.Color c)
+		{
+			return new RGB.NET.Core.Color(c.A, c.R, c.G, c.B);
+		}
     }
 }
